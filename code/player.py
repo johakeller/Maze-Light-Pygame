@@ -8,7 +8,7 @@ class Player(Entity):
         super().__init__(groups)
         self.image = pygame.image.load('../graphics/character/move/0.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
-        self.hitbox = self.rect.inflate(-6, -26)
+        self.hitbox = self.rect.inflate(-15, -30)
 
         self.player_win = False
 
@@ -37,6 +37,13 @@ class Player(Entity):
         self.hurt_time = None
         self.invulnerability_duration = 400
 
+        # sounds
+        self.coin_sound = pygame.mixer.Sound('../audio/coin.mp3')
+        self.coin_sound.set_volume(1)
+        self.flower_sound = pygame.mixer.Sound('../audio/flower.wav')
+        self.flower_sound.set_volume(0.2)
+
+
     def move(self, speed):
         if self.direction.magnitude() != 0:
             # normalize vector to length=1
@@ -54,12 +61,15 @@ class Player(Entity):
         for sprite in self.obstacle_sprites:
             if sprite.hitbox.colliderect(self.hitbox):
                 if sprite.sprite_type == 'silver':
+                    self.coin_sound.play()
                     self.coins += 100
                     sprite.kill()
                 elif sprite.sprite_type == 'gold':
+                    self.coin_sound.play()
                     self.coins += 500
                     sprite.kill()
                 elif sprite.sprite_type == 'flower':
+                    self.flower_sound.play()
                     self.visible_factor += 0.3
                     self.speed += 1
                     new_health = self.health + 25
@@ -95,10 +105,9 @@ class Player(Entity):
             self.light_time = pygame.time.get_ticks()
             if self.light_on:
                 self.light_on = False
-                print('light off')
             else:
                 self.light_on = True
-                print('light on')
+
 
     def cooldowns(self):
         current_time = pygame.time.get_ticks()

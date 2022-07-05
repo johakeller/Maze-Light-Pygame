@@ -43,6 +43,14 @@ class Level:
         self.message = None
         self.menu = None
 
+        # sound
+        self.game_over_sound = pygame.mixer.Sound('../audio/death.wav')
+        self.game_over_sound.set_volume(0.4)
+        self.win_sound = pygame.mixer.Sound('../audio/win.wav')
+        self.win_sound.set_volume(0.4)
+        self.button_sound = pygame.mixer.Sound('../audio/button.wav')
+        self.button_sound.set_volume(0.4)
+
     def create_map(self):
         layouts = {
             'walls': import_csv_layout(self.level_data['walls']),
@@ -104,12 +112,14 @@ class Level:
     def check_paused(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_m]:
+            self.button_sound.play()
             self.pause_game()
             self.message = Message(self.display_surface, self.current_level, self.max_level, 'paused', self.pause_game,
                                    self.set_game_over, self.set_win, self.player.coins)
 
     def check_death(self):
         if self.player.health <= 0:
+            self.game_over_sound.play()
             self.game_paused = True
             self.message = Message(self.display_surface, self.current_level, self.max_level, 'game_over',
                                    self.pause_game, self.set_game_over, self.set_win, self.player.coins)
@@ -119,6 +129,7 @@ class Level:
 
     def check_win(self):
         if self.player.player_win:
+            self.win_sound.play()
             self.game_paused = True
             self.message = Message(self.display_surface, self.current_level, self.max_level, 'win', self.pause_game,
                                    self.set_game_over, self.set_win, self.player.coins)

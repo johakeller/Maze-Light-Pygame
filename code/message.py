@@ -20,6 +20,10 @@ class Message(Menu):
         self.score_rect = None
         self.build_message()  # calls build message
 
+        # sound
+        self.button_sound = pygame.mixer.Sound('../audio/button.wav')
+        self.button_sound.set_volume(0.4)
+
     def build_message(self):
         text = None
 
@@ -70,6 +74,7 @@ class Message(Menu):
     def input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] or keys[pygame.K_RETURN]:
+            self.button_sound.play()
             self.can_move = False
             self.selection_time = pygame.time.get_ticks()
             self.trigger()

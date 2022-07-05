@@ -1,12 +1,26 @@
-import pygame, sys
+import sys
 
+import pygame
+
+from level import Level
 from menu import Menu
 from settings import *
-from level import Level
-from game_data import level_0
 
 
 class Game:
+    """
+            A class to initialize an Audiorecorder instance, which launches the audiorecorder GUI.
+            Example radio channel for test purposes: http://radios.rtbf.be/vivabxl-128.mp3
+
+            ...
+
+            Attributes
+            ----------
+            av : AudiorecView
+                Instance of AudiorecView() class
+            ac : AudiorecControl
+                Instance of AudiorecControl() class
+            """
     def __init__(self):
         # menu
         self.level = None
@@ -15,9 +29,23 @@ class Game:
         self.status = 'menu'
 
     def pause_game(self):
+        """Setter for controller
+
+        Parameters
+        ----------
+        controller : AudiorecControl,
+            Instance of AudiorecControl() class
+        """
         self.level.game_paused = not self.level.game_paused
 
     def create_menu(self, current_level, new_max_level, menu_type):
+        """Setter for controller
+
+        Parameters
+        ----------
+        controller : AudiorecControl,
+            Instance of AudiorecControl() class
+        """
         if new_max_level > self.max_level:
             self.max_level = new_max_level
         self.menu = Menu(current_level, self.max_level, screen, menu_type, self.create_level, sys.exit, self.pause_game)
@@ -26,10 +54,24 @@ class Game:
         self.status = 'menu'
 
     def create_level(self, current_level):
+        """Setter for controller
+
+        Parameters
+        ----------
+        controller : AudiorecControl,
+            Instance of AudiorecControl() class
+        """
         self.level = Level(current_level, screen, self.create_menu, self.run)
         self.status = 'level'
 
     def run(self):
+        """Setter for controller
+
+        Parameters
+        ----------
+        controller : AudiorecControl,
+            Instance of AudiorecControl() class
+        """
         if self.status == 'menu':
             self.menu.run()
         else:
@@ -45,6 +87,13 @@ game = Game()
 
 
 def run():
+    """Setter for controller
+
+    Parameters
+    ----------
+    controller : AudiorecControl,
+        Instance of AudiorecControl() class
+    """
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

@@ -35,6 +35,10 @@ class Menu:
         self.selection_time = None
         self.can_move = True
 
+        # sound
+        self.button_sound = pygame.mixer.Sound('../audio/button.wav')
+        self.button_sound.set_volume(0.4)
+
     def build_menu(self):
         top = self.height // 2
         left = self.width // 2 + 15
@@ -94,6 +98,7 @@ class Menu:
                 self.selection_time = pygame.time.get_ticks()
 
             if keys[pygame.K_SPACE] or keys[pygame.K_RETURN]:
+                self.button_sound.play()
                 self.can_move = False
                 self.selection_time = pygame.time.get_ticks()
                 self.button_list[self.selection_index].trigger(self.current_level, self.max_level, self.create_level,

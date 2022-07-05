@@ -44,6 +44,10 @@ class Enemy(Entity):
         self.remember_time = None
         self.remember_cooldown = 800
 
+        # sound
+        self.enemy_attack_sound = pygame.mixer.Sound('../audio/spider_attack.wav')
+        self.enemy_attack_sound.set_volume(0.1)
+
     def import_graphics(self):
         enemy_path = '../graphics/enemy/'
         self.animations = {'left': [], 'right': [],
@@ -91,6 +95,7 @@ class Enemy(Entity):
 
     def actions(self, player):
         if 'attack' in self.status:
+            self.enemy_attack_sound.play()
             self.attack_time = pygame.time.get_ticks()
             self.damage_player(self.attack_damage)
         elif self.status == 'left' or self.status == 'right':
