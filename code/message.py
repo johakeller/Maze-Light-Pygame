@@ -74,7 +74,7 @@ class Message(Menu):
     def input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] or keys[pygame.K_RETURN]:
-            self.button_sound.play()
+            pygame.mixer.find_channel(True).play(self.button_sound)
             self.can_move = False
             self.selection_time = pygame.time.get_ticks()
             self.trigger()

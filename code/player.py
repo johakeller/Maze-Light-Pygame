@@ -6,7 +6,7 @@ from entity import Entity
 class Player(Entity):
     def __init__(self, pos, groups, obstacle_sprites):
         super().__init__(groups)
-        self.image = pygame.image.load('../graphics/character/move/0.png').convert_alpha()
+        self.image = pygame.image.load('../graphics/player/move/0.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         self.hitbox = self.rect.inflate(-15, -30)
 
@@ -22,7 +22,7 @@ class Player(Entity):
         self.light_time = None
 
         # animation
-        self.frames = import_folder('../graphics/character/move/')
+        self.frames = import_folder('../graphics/player/move/')
 
         # stats
         self.stats = {'health': 100, 'coins': 0, 'speed': 5, 'visible_factor': 1, 'visible_radius': 220}
@@ -32,7 +32,7 @@ class Player(Entity):
         self.visible_factor = self.stats['visible_factor']
         self.visible_radius = self.stats['visible_radius'] * self.visible_factor
 
-        # enemy interaction
+        # souleater interaction
         self.vulnerable = True
         self.hurt_time = None
         self.invulnerability_duration = 400
@@ -61,15 +61,15 @@ class Player(Entity):
         for sprite in self.obstacle_sprites:
             if sprite.hitbox.colliderect(self.hitbox):
                 if sprite.sprite_type == 'silver':
-                    self.coin_sound.play()
+                    pygame.mixer.find_channel(True).play(self.coin_sound)
                     self.coins += 100
                     sprite.kill()
                 elif sprite.sprite_type == 'gold':
-                    self.coin_sound.play()
+                    pygame.mixer.find_channel(True).play(self.coin_sound)
                     self.coins += 500
                     sprite.kill()
                 elif sprite.sprite_type == 'flower':
-                    self.flower_sound.play()
+                    pygame.mixer.find_channel(True).play(self.flower_sound)
                     self.visible_factor += 0.3
                     self.speed += 1
                     new_health = self.health + 25

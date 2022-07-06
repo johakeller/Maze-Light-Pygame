@@ -2,7 +2,7 @@ import sys
 
 import pygame
 
-from enemy import Enemy
+from souleater import Souleater
 from particles import ParticleEffect
 from player import Player
 from settings import TILE_SIZE
@@ -44,10 +44,12 @@ class Level:
         self.menu = None
 
         # sound
-        self.game_over_sound = pygame.mixer.Sound('../audio/death.wav')
+        self.game_over_sound = pygame.mixer.Sound('../audio/game_over.wav')
         self.game_over_sound.set_volume(0.4)
         self.win_sound = pygame.mixer.Sound('../audio/win.wav')
         self.win_sound.set_volume(0.4)
+        self.enemy_attack_sound = pygame.mixer.Sound('../audio/souleater_attack.wav')
+        self.enemy_attack_sound.set_volume(0.4)
         self.button_sound = pygame.mixer.Sound('../audio/button.wav')
         self.button_sound.set_volume(0.4)
 
@@ -69,14 +71,14 @@ class Level:
 
                         if style == 'enemies':
                             if col == '0':
-                                self.enemy = Enemy((x, y), [self.visible_sprites], self.obstacle_sprites,
-                                                   self.damage_player, self.trigger_particles)
+                                self.enemy = Souleater((x, y), [self.visible_sprites], self.obstacle_sprites,
+                                                       self.damage_player, self.trigger_particles)
 
                         if style == 'player':
                             if col == '0':
                                 self.player = Player((x, y), [self.visible_sprites],self.obstacle_sprites)
                             if col == '1':
-                                tile_surface = pygame.image.load('../graphics/character/ring.png').convert_alpha()
+                                tile_surface = pygame.image.load('../graphics/player/ring.png').convert_alpha()
                                 Tile((x, y), [self.visible_sprites, self.obstacle_sprites], 'goal', tile_surface)
 
                         if style == 'walls':
@@ -104,6 +106,7 @@ class Level:
 
     def damage_player(self, damage):
         if self.player.vulnerable:
+            pygame.mixer.find_channel(True).play(self.enemy_attack_sound)
             self.player.health -= damage
             self.player.vulnerable = False
             self.player.hurt_time = pygame.time.get_ticks()
@@ -119,7 +122,7 @@ class Level:
 
     def check_death(self):
         if self.player.health <= 0:
-            self.game_over_sound.play()
+            pygame.mixer.find_channel(True).play(self.game_over_sound)
             self.game_paused = True
             self.message = Message(self.display_surface, self.current_level, self.max_level, 'game_over',
                                    self.pause_game, self.set_game_over, self.set_win, self.player.coins)
@@ -129,7 +132,7 @@ class Level:
 
     def check_win(self):
         if self.player.player_win:
-            self.win_sound.play()
+            pygame.mixer.find_channel(True).play(self.win_sound)
             self.game_paused = True
             self.message = Message(self.display_surface, self.current_level, self.max_level, 'win', self.pause_game,
                                    self.set_game_over, self.set_win, self.player.coins)
@@ -188,6 +191,6 @@ class CameraGroup(pygame.sprite.Group):
 
     def enemy_update(self, player):
         enemy_sprites = [sprite for sprite in self.sprites() if
-                         hasattr(sprite, 'sprite_type') and sprite.sprite_type == 'enemy']
+                         hasattr(sprite, 'sprite_type') and sprite.sprite_type == 'souleater']
         for sprite in enemy_sprites:
             sprite.enemy_update(player)
