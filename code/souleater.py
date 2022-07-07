@@ -11,12 +11,12 @@ class Souleater(Entity):
     ----------
     pos : (x,y)
         determines position of the enemy-sprite
-    groups : sprite groups
-        determines the sprite groups the enemy-object is belonging to
+    groups : list
+        determines the sprite groups the enemy-object belongs to
+    obstacle_sprites: pygame.sprite.Group()
+        group of sprites the enemy is able to collide with
     damage_player : def
         function which determines damage for player-object
-    trigger_particles : def
-        function to trigger particle effect when player is attacked
 
     Attributes
     ----------
@@ -24,34 +24,37 @@ class Souleater(Entity):
         type of sprite object
     animations : dict
         dictionary of status and lists of images for animation
-    import_graphics() : def
-        method coll to setup enemy graphics
+    import_graphics() : method call
+        method coll to set up enemy graphics
     status : str
-        status for behavoir determination
+        status for behavior determination
     image : str
         selection of image for animation frame
-    rect : pygame.rect
+    rect : pygame.Rect
         determines position of frames
-    hitbox : pygame.rect
-        rect for environment interaction
-    obstacle_sprites : srpite.Group()
-        group of collideable sprites
-    stats: dict
+    hitbox : pygame.Rect
+        inflated Rect for environment interaction
+    obstacle_sprites : sprite.Group()
+        group of collide able sprites
+    stats : dict
         dictionary of enemy attributes
+            self.attack_damage = self.stats['attack_damage']
+    speed : int
+        speed of enemy
+    attack_radius : int
+        radius in which attack on player is possible
     can_attack : boolean
         determines whether enemy is able to attack player
     attack_time : int
         time of attack for timer
     attack_cooldown : int
-        time for cooldown afterr attack
+        time for cooldown after attack
     damage_player : def
         function which determines damage for player-object
     last_player_pos : (x,y)
         last position of player before light was switched off
     current_player_pos : (x,y)
         current position of player-object
-    trigger_particles : def
-        function to trigger particle effect when player is attacked
     can_remember : boolean
          ability of enemy to remember new player position
     remember_time : int
@@ -60,9 +63,9 @@ class Souleater(Entity):
         cooldown for remembering player position
     """
 
-    def __init__(self, pos, groups, obstacle_sprites, damage_player, trigger_particles):
+    def __init__(self, pos, groups, obstacle_sprites, damage_player):
         # general setup
-        super().__init__(groups)
+        super().__init__(groups, obstacle_sprites)
         self.sprite_type = 'souleater'
 
         # graphic setup
@@ -76,10 +79,6 @@ class Souleater(Entity):
         # movement
         self.rect = self.image.get_rect(center=(pos[0] + (TILE_SIZE / 2), pos[1] + (TILE_SIZE / 2)))
         self.hitbox = self.rect.inflate(0, -10)
-        self.obstacle_sprites = obstacle_sprites
-
-        # collisions
-        self.obstacle_sprites = obstacle_sprites
 
         # statistics
         self.stats = {'attack_damage': 34, 'attack_sound': '../audio/claw.wav', 'speed': 5,
@@ -95,7 +94,6 @@ class Souleater(Entity):
         self.damage_player = damage_player
         self.last_player_pos = None
         self.current_player_pos = None
-        self.trigger_particles = trigger_particles
         self.can_remember = True
         self.remember_time = None
         self.remember_cooldown = 800
@@ -116,22 +114,23 @@ class Souleater(Entity):
 
     def get_player_distance_direction(self, player_pos):
         """
-            Retrieves vector comprising distance and direction to player
+        Retrieves vector comprising distance and direction to player
 
-            Parameters
-            ----------
-            player_pos : (x,y)
-                assumed position of player object
+        Parameters
+        ----------
+        player_pos : (x,y)
+            assumed position of player object
 
-            Returns
-            -------
-            (float, float)
-                distance and direction of player-object
+        Returns
+        -------
+        (float, float)
+            distance and direction of player-object
         """
         enemy_vec = pygame.math.Vector2(self.rect.center)
         player_vec = pygame.math.Vector2(player_pos)
         distance = (player_vec - enemy_vec).magnitude()
         if distance > 0:
+
             direction = (player_vec - enemy_vec).normalize()
         else:
             direction = pygame.math.Vector2(0, 0)
@@ -146,7 +145,7 @@ class Souleater(Entity):
 
         Parameters
         ----------
-        player : Player()
+        player : Player
             player object
         """
         distance = self.get_player_distance_direction(self.current_player_pos)[0]
@@ -180,7 +179,7 @@ class Souleater(Entity):
 
         Parameters
         ----------
-        player : Player()
+        player : Player
             player object
         """
         if 'attack' in self.status:
