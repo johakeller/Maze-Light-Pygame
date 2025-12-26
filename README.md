@@ -24,7 +24,7 @@
     ```
 
 ## Control
-LEFT, RIGHT, DOWN, UP - moving the player,
-SPACE - light off/on
+`LEFT`, `RIGHT`, `DOWN`, `UP` - moving the player,
+`SPACE` - light off/on
 
 
